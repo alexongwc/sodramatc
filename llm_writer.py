@@ -1,5 +1,4 @@
 # llm_writer.py
-# llm_writer.py
 
 import os
 from openai import OpenAI

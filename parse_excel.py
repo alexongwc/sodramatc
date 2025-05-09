@@ -3,11 +3,19 @@
 import pandas as pd
 
 QUARTERS = ["Q1", "Q2", "Q3", "Q4"]
+INVALID_VALUES = {
+    "- NIL -", "-NIL-", "NIL", "NA", "N.A.", "N.A", "", None,
+    "NONE", "NOT APPLICABLE", "NAN"
+}
+
+def is_valid(text):
+    if text is None or pd.isna(text):
+        return False
+    normalized = str(text).strip().upper().replace(" ", "")
+    return normalized not in INVALID_VALUES
 
 def parse_excel(file) -> dict:
     df = pd.read_excel(file, engine="openpyxl")
-
-    # Clean headers
     df.columns = df.columns.str.strip().str.replace(r"\s+", " ", regex=True)
 
     try:
@@ -15,7 +23,7 @@ def parse_excel(file) -> dict:
         updates_col = next(col for col in df.columns if "workplan initiatives updates" in col.lower())
         completion_col = next(col for col in df.columns if "completion date" in col.lower())
     except StopIteration:
-        raise ValueError("Missing expected columns: 'Priority Focus Area', 'Workplan Initiatives Updates', or 'Completion Date'.")
+        raise ValueError("Missing required columns: 'Priority Focus Area', 'Workplan Initiatives Updates', or 'Completion Date'.")
 
     result = {q: [] for q in QUARTERS}
 
@@ -24,19 +32,15 @@ def parse_excel(file) -> dict:
         if quarter not in QUARTERS:
             continue
 
-        title = str(row.get(focus_col, "")).strip()
-        content = str(row.get(updates_col, "")).strip()
+        title = row.get(focus_col, "")
+        content = row.get(updates_col, "")
 
-        # Skip if either field is empty or marked as -NIL-
-        if not title or not content:
-            continue
-        if "-NIL-" in title.upper() or "-NIL-" in content.upper():
+        if not (is_valid(title) and is_valid(content)):
             continue
 
         result[quarter].append({
-            "section_title": title,
-            "content": content
+            "section_title": str(title).strip(),
+            "content": str(content).strip()
         })
 
-    # Filter out quarters with no valid entries
     return {q: entries for q, entries in result.items() if entries}

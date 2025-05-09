@@ -1,6 +1,6 @@
 # agents.py
 
-from parse_excel import parse_excel
+from parse_excel import parse_excel, is_valid
 from pdf_writer import generate_pdf
 from llm_writer import generate_batch_paragraphs
 
@@ -24,10 +24,25 @@ class ReportAgent:
             entries = self.report_data[selected_quarter]
             rewritten_sections = {}
 
-            # Batch size of 5
             for i in range(0, len(entries), 5):
                 batch = entries[i:i + 5]
-                batch_result = generate_batch_paragraphs(batch)
+                valid_batch = [
+                    entry for entry in batch
+                    if is_valid(entry.get("section_title")) and is_valid(entry.get("content"))
+                ]
+                if not valid_batch:
+                    continue
+
+                # 🔍 Debug: print what is being sent to GPT
+                print("Sending batch to LLM:")
+                for entry in valid_batch:
+                    print(f"Title: {entry['section_title']}\nContent: {entry['content']}\n---")
+
+                batch_result = generate_batch_paragraphs(valid_batch)
+
+                # 🔍 Debug: print how many paragraphs returned
+                print(f"GPT returned {len(batch_result)} paragraphs.\n")
+
                 rewritten_sections.update(batch_result)
 
             if not rewritten_sections:
