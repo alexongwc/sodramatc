@@ -33,14 +33,14 @@ class ReportAgent:
                 if not valid_batch:
                     continue
 
-                # 🔍 Debug: print what is being sent to GPT
+                # Debug: print what is being sent to GPT
                 print("Sending batch to LLM:")
                 for entry in valid_batch:
                     print(f"Title: {entry['section_title']}\nContent: {entry['content']}\n---")
 
                 batch_result = generate_batch_paragraphs(valid_batch)
 
-                # 🔍 Debug: print how many paragraphs returned
+                # Debug: print how many paragraphs returned
                 print(f"GPT returned {len(batch_result)} paragraphs.\n")
 
                 rewritten_sections.update(batch_result)
