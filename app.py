@@ -5,7 +5,7 @@ from agents import ReportAgent
 
 # Configure Streamlit page
 st.set_page_config(page_title="Quarterly Report Generator", layout="centered")
-st.title("Excel to Quarterly PDF Report Generator")
+st.title("Excel to Quarterly Report Generator")
 
 # --- Persist agent in session ---
 if "agent" not in st.session_state:
@@ -28,9 +28,9 @@ if uploaded_file:
     default_prompt = """You are a professional report writer preparing a government-style quarterly report.
 
 For each numbered item below:
-1. Rephrase the title as a single polished sentence, do not exceed more than 7 words
+1. Rephrase the title as a single polished sentence (this will be the bold+underlined heading)
 2. Rewrite the content into a concise, human-sounding paragraph suitable for reporting
-3. If the content is incoherent, vague, empty, or any generic filler text, **DO NOT fabricate a paragraph**. Instead, respond with "[SKIP: Incoherent or insufficient content]".
+3. If the content is incoherent, vague, empty, or includes phrases like "test", "lorem", "in this quarter", or any generic filler text, **DO NOT fabricate a paragraph**. Instead, respond with "[SKIP: Incoherent or insufficient content]".
 
 Be truthful and do not make up information."""
     user_prompt = st.text_area("Customize your prompt if needed:", value=default_prompt, height=300)
@@ -39,17 +39,28 @@ Be truthful and do not make up information."""
     # --- Quarter selection ---
     quarter = st.selectbox("Select Quarter to Generate", ["Q1", "Q2", "Q3", "Q4"])
 
+    # --- Output Mode Toggle ---
+    output_mode = st.radio("Choose Output Format", ["PDF", "Plain Text"])
+
     # --- Generate button ---
-    if st.button("Generate PDF for Selected Quarter"):
-        with st.spinner("Generating PDF..."):
-            pdf_stream, message = agent.generate_quarter_pdf(quarter, st.session_state.user_prompt)
-            if pdf_stream:
-                st.success(message)
-                st.download_button(
-                    label=f"Download {quarter} Report",
-                    data=pdf_stream,
-                    file_name=f"{quarter}_Report.pdf",
-                    mime="application/pdf"
-                )
+    if st.button("Generate Report"):
+        with st.spinner("Generating report..."):
+            if output_mode == "PDF":
+                pdf_stream, message = agent.generate_quarter_pdf(quarter, user_prompt)
+                if pdf_stream:
+                    st.success(message)
+                    st.download_button(
+                        label=f"Download {quarter} Report",
+                        data=pdf_stream,
+                        file_name=f"{quarter}_Report.pdf",
+                        mime="application/pdf"
+                    )
+                else:
+                    st.error(message)
             else:
-                st.error(message)
+                report_text, message = agent.generate_quarter_text(quarter, user_prompt)
+                if report_text:
+                    st.success(message)
+                    st.text_area("Generated Report:", value=report_text, height=600)
+                else:
+                    st.error(message)

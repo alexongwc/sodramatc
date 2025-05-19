@@ -54,3 +54,34 @@ class ReportAgent:
 
         except Exception as e:
             return None, f"Error generating PDF: {str(e)}"
+        
+    def generate_quarter_text(self, selected_quarter, user_prompt):
+        if not self.report_data or selected_quarter not in self.report_data:
+            return None, "Missing or invalid report data."
+
+        try:
+            entries = self.report_data[selected_quarter]
+            rewritten_sections = {}
+
+            for i in range(0, len(entries), 5):
+                batch = entries[i:i + 5]
+                valid_batch = [
+                    entry for entry in batch
+                    if is_valid(entry.get("section_title")) and is_valid(entry.get("content"))
+                ]
+                if not valid_batch:
+                    continue
+
+                batch_result = generate_batch_paragraphs(valid_batch, user_prompt)
+                rewritten_sections.update(batch_result)
+
+            if not rewritten_sections:
+                return None, "No valid sections generated."
+
+            full_report = "\n\n".join(
+                f"### {title}\n{paragraph}" for title, paragraph in rewritten_sections.items()
+            )
+            return full_report, "Text report generated successfully."
+
+        except Exception as e:
+            return None, f"Error generating report: {str(e)}"
