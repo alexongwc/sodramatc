@@ -16,7 +16,7 @@ class ReportAgent:
         except Exception as e:
             return f"Failed to parse Excel: {str(e)}"
 
-    def generate_quarter_pdf(self, selected_quarter):
+    def generate_quarter_pdf(self, selected_quarter, user_prompt):
         if not self.report_data or selected_quarter not in self.report_data:
             return None, "Missing or invalid report data."
 
@@ -38,7 +38,8 @@ class ReportAgent:
                 for entry in valid_batch:
                     print(f"Title: {entry['section_title']}\nContent: {entry['content']}\n---")
 
-                batch_result = generate_batch_paragraphs(valid_batch)
+                # ✅ Pass the custom prompt from user
+                batch_result = generate_batch_paragraphs(valid_batch, user_prompt)
 
                 # Debug: print how many paragraphs returned
                 print(f"GPT returned {len(batch_result)} paragraphs.\n")
