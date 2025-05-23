@@ -3,8 +3,11 @@
 import os
 from openai import OpenAI
 from dotenv import load_dotenv
+import certifi
 
 load_dotenv()
+os.environ["SSL_CERT_FILE"] = certifi.where()
+
 client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
 def generate_batch_paragraphs(batch: list[dict], user_prompt: str) -> dict:
