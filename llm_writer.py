@@ -12,9 +12,9 @@ client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
 def generate_batch_paragraphs(batch: list[dict], user_prompt: str) -> dict:
     numbered_blocks = []
-    for i, entry in enumerate(batch, 1):
+    for entry in batch:
         numbered_blocks.append(
-            f"{i}.\nTitle: {entry['section_title']}\nContent: {entry['content']}"
+            f"Title: {entry['section_title']}\nContent: {entry['content']}"
         )
 
     full_prompt = f"""{user_prompt}
