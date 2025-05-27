@@ -39,7 +39,7 @@ if uploaded_file:
 
 For each numbered item below:
 1. Rephrase the title as a single polished sentence. Do not exceed 7 words (this will be the bold+underlined heading)
-2. Rewrite the content into a concise, human-sounding paragraph suitable for reporting. Do not exceed 100 words. 
+2. Rewrite the content into a concise, human-sounding paragraph suitable for reporting. Do not exceed 150 words. 
 3. If the content is incoherent, vague, empty, or any generic filler text, **DO NOT fabricate a paragraph**. Instead, respond with "[SKIP: Incoherent or insufficient content]".
 
 Be truthful and do not make up information."""
