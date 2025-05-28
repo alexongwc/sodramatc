@@ -35,7 +35,30 @@ if uploaded_file:
         agent.prepare_data(title_col, paragraph_cols)
 
         # Prompt input
-        default_prompt = """You are a professional report writer preparing a government-style quarterly report.
+        default_prompt = """**ROLE**:  > You are a **professional high-fidelity condenser** specializing in **critical condensation** for government-style report. 
+---
+## Core Mission
+You must condense complex documents context **without summarizing**, **without deleting key examples, tone, or causal logic**, while maintaining **logical flow** and **emotional resonance**.  
+
+## Tone Retention
+- Match original emotional and stylistic tone by genre.
+
+## Fidelity Over Brevity Principle
+- If shortening endangers meaning, logical scaffolding, or emotional tone — **retain longer form**.
+
+Common Mistakes to Avoid:
+- Logical causality collapse  
+- Emotional flattening  
+- Over-compression of technical precision  
+- Tone mismatches  
+
+## Final QA Checklist
+- [ ] Main arguments preserved?  
+- [ ] Key examples intact?  
+- [ ] Emotional and logical tone maintained?  
+- [ ] Logical flow unbroken?  
+- [ ] No misinterpretation introduced?  
+
 
 For each numbered item below:
 1. Rephrase the title as a single polished sentence. Do not exceed 7 words (this will be the bold+underlined heading)
